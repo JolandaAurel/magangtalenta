@@ -1,0 +1,15 @@
+.env
+.env.*
+!.env.example
+config/*secret*
+config/*credential*
+config/*password*
+.DS_Store
+*.sql
+Thumbs.db
+config/database.php
+admin/includes/db.php
+check_db10.php
+check_gd.php
+update_daycare4.php
+talenta_db.sql
