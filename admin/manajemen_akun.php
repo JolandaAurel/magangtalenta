@@ -404,7 +404,7 @@ $admins = $pdo->query("SELECT * FROM admin_users ORDER BY id ASC")->fetchAll(PDO
                     <h3 style="color: #0F3C5C; margin: 0;">Edit Halaman: <?php echo htmlspecialchars($currentTentangPage['title']); ?></h3>
                     <small style="color: #64748b;">URL: /page.php?slug=<?php echo htmlspecialchars($currentTentangPage['slug']); ?></small>
                 </div>
-                <a href="/talenta-semarang/page.php?slug=<?php echo htmlspecialchars($currentTentangPage['slug']); ?>" target="_blank" class="btn btn-sm btn-outline">
+                <a href="/outsource_talenta_landing/magangtalenta/page.php?slug=<?php echo htmlspecialchars($currentTentangPage['slug']); ?>" target="_blank" class="btn btn-sm btn-outline">
                     <i class="fas fa-external-link-alt"></i> Pratinjau di Website
                 </a>
             </div>

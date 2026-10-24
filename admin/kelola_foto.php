@@ -80,7 +80,7 @@ foreach ($all_pages as $p) {
             <div style="border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; background: #f8fafc; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
                 <div style="height: 120px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: <?php echo $exists ? '#e2e8f0' : '#fee2e2'; ?>;">
                     <?php if ($exists): ?>
-                        <img src="/talenta-semarang/assets/images/<?php echo $filename; ?>?t=<?php echo time(); ?>" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                        <img src="/outsource_talenta_landing/magangtalenta/assets/images/<?php echo $filename; ?>?t=<?php echo time(); ?>" style="max-width: 100%; max-height: 100%; object-fit: contain;">
                     <?php else: ?>
                         <span style="color: #ef4444; font-size: 0.8rem;">(Gambar belum ada)</span>
                     <?php endif; ?>

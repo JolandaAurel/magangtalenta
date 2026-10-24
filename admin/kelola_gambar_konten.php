@@ -6,7 +6,7 @@ $images_dir = '../assets/images/';
 // Insert New Photo (Replace Inline Image)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'replace_inline') {
     $page_id = (int)$_POST['page_id'];
-    $old_src = $_POST['old_src']; // e.g., /talenta-semarang/assets/images/daycare1.png
+    $old_src = $_POST['old_src']; // e.g., /outsource_talenta_landing/magangtalenta/assets/images/daycare1.png
     
     // Fetch current html
     $stmt = $pdo->prepare("SELECT content_html, slug FROM pages WHERE id = ?");
@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         // Create unique name
         $name = $slug . '_' . time() . '_' . preg_replace('/[^a-zA-Z0-9.-]/', '_', $_FILES['new_image']['name']);
         $dest = $images_dir . $name;
-        $new_src = '/talenta-semarang/assets/images/' . $name;
+        $new_src = '/outsource_talenta_landing/magangtalenta/assets/images/' . $name;
         
         if (move_uploaded_file($tmp_name, $dest)) {
             // Replace the exact old src with the new src in the HTML

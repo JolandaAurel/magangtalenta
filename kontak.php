@@ -19,7 +19,7 @@ $jam = $settings['operational_hours'] ?? 'Senin - Jumat: 08.00 - 16.00 WIB | Sab
     <p style="color: #64748b; font-size: 1.1rem; max-width: 600px; margin: 10px auto 0;">Kami siap membantu dan menjawab pertanyaan Anda seputar program pendidikan dan layanan psikologi Talenta Semarang.</p>
 </div>
 
-<div style="max-width: 1000px; margin: 30px auto 80px; padding: 0 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+<div class="contact-grid-container" style="max-width: 1000px; margin: 30px auto 80px; padding: 0 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
     
     <!-- Contact Info -->
     <div style="background: #fff; border-radius: 20px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;">

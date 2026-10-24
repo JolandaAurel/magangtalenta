@@ -193,21 +193,21 @@ $related = $relStmt->fetchAll();
         <?php 
             // If the content starts with 'Sekolah Talenta', wrap it in a blue link to match the mockup
             $content = $article->content;
-            $content = str_replace('<p>Sekolah Talenta', '<p><a href="/talenta-semarang/">Sekolah Talenta</a>', $content);
+            $content = str_replace('<p>Sekolah Talenta', '<p><a href="/outsource_talenta_landing/magangtalenta/">Sekolah Talenta</a>', $content);
             echo $content;
         ?>
     </div>
 
     <div class="article-nav">
         <!-- Mockup shows generic next/prev, we can leave static or pull adjacent rows -->
-        <a href="/talenta-semarang/artikel.php"><i class="fas fa-angle-double-left"></i> Kembali ke Artikel</a>
-        <a href="/talenta-semarang/artikel.php">Artikel Lainnya <i class="fas fa-angle-double-right"></i></a>
+        <a href="/outsource_talenta_landing/magangtalenta/artikel.php"><i class="fas fa-angle-double-left"></i> Kembali ke Artikel</a>
+        <a href="/outsource_talenta_landing/magangtalenta/artikel.php">Artikel Lainnya <i class="fas fa-angle-double-right"></i></a>
     </div>
 
     <h3 class="related-posts-title">Related Posts</h3>
     <div class="related-grid">
         <?php foreach($related as $rel): ?>
-        <a href="/talenta-semarang/artikel-detail.php?slug=<?php echo $rel->slug; ?>" class="related-card">
+        <a href="/outsource_talenta_landing/magangtalenta/artikel-detail.php?slug=<?php echo $rel->slug; ?>" class="related-card">
             <img src="<?php echo htmlspecialchars($rel->featured_image); ?>" class="related-img" alt="<?php echo htmlspecialchars($rel->title); ?>">
             <div class="related-meta">ARTIKEL</div>
             <h4 class="related-title"><?php echo htmlspecialchars($rel->title); ?></h4>

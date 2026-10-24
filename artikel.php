@@ -254,7 +254,7 @@ if (!empty($q)) {
 </style>
 
 <div class="artikel-banner-container">
-    <img src="/talenta-semarang/assets/images/artikel_banner.png" alt="Artikel Banner" class="artikel-banner-img">
+    <img src="/outsource_talenta_landing/magangtalenta/assets/images/artikel_banner.png" alt="Artikel Banner" class="artikel-banner-img">
 </div>
 
 <div class="page-content">
@@ -313,7 +313,7 @@ if (!empty($q)) {
                     <div class="artikel-card">
                         <div class="artikel-card-img-container">
                             <?php 
-                            $img = $a->featured_image ? $a->featured_image : '/talenta-semarang/assets/images/galeri2.png';
+                            $img = $a->featured_image ? $a->featured_image : '/outsource_talenta_landing/magangtalenta/assets/images/galeri2.png';
                             ?>
                             <img src="<?php echo $img; ?>" alt="<?php echo htmlspecialchars($a->title); ?>" style="width: 100%; height: 100%; object-fit: cover; transition: 0.3s;" class="artikel-card-img">
                             <div class="artikel-card-date">

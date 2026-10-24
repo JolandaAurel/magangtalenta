@@ -1,6 +1,7 @@
 <?php
-// profil.php
-require_once 'includes/header.php';
+// profil.php - Dialihkan ke halaman profil dinamis yang dikelola via Admin
+header("Location: /outsource_talenta_landing/magangtalenta/page.php?slug=profil", true, 301);
+exit;
 
 // Fetch profile data from database
 $stmt = $pdo->prepare("SELECT * FROM pages WHERE slug = 'profil' LIMIT 1");
@@ -9,10 +10,10 @@ $page = $stmt->fetch();
 
 // Placeholder images for the grids based on screenshot
 $gridImages = [
-    '/talenta-semarang/assets/images/profil_gal_1.jpg',
-    '/talenta-semarang/assets/images/profil_gal_6.jpg',
-    '/talenta-semarang/assets/images/profil_gal_8.jpg',
-    '/talenta-semarang/assets/images/profil_gal_11.jpg'
+    '/outsource_talenta_landing/magangtalenta/assets/images/profil_gal_1.jpg',
+    '/outsource_talenta_landing/magangtalenta/assets/images/profil_gal_6.jpg',
+    '/outsource_talenta_landing/magangtalenta/assets/images/profil_gal_8.jpg',
+    '/outsource_talenta_landing/magangtalenta/assets/images/profil_gal_11.jpg'
 ];
 
 $bottomImages = [
@@ -151,11 +152,16 @@ $bottomImages = [
             grid-template-columns: repeat(2, 1fr);
         }
     }
+    @media (max-width: 480px) {
+        .bottom-gallery {
+            grid-template-columns: 1fr;
+        }
+    }
 </style>
 
 <!-- Banner Full Responsive -->
 <div class="profil-banner-container">
-    <img src="/talenta-semarang/assets/images/profil_banner.png" alt="Banner Profil Talenta" class="profil-banner-img">
+    <img src="/outsource_talenta_landing/magangtalenta/assets/images/profil_banner.png" alt="Banner Profil Talenta" class="profil-banner-img">
 </div>
 
 <!-- Toolbar / Breadcrumb area -->
@@ -164,7 +170,7 @@ $bottomImages = [
         <div class="toolbar-left">
             <span>Fun and Active Learning</span>
             <span style="color: #cbd5e1;">|</span>
-            <span><a href="/talenta-semarang/" class="home-link"><i class="fas fa-home"></i> Home</a> / Profil Sekilas</span>
+            <span><a href="/outsource_talenta_landing/magangtalenta/" class="home-link"><i class="fas fa-home"></i> Home</a> / Profil Sekilas</span>
         </div>
         
     </div>
@@ -196,7 +202,7 @@ $bottomImages = [
 <div class="bottom-gallery">
     <?php 
     for ($i = 1; $i <= 12; $i++) {
-        echo "<img src=\"/talenta-semarang/assets/images/profil_gal_{$i}.jpg\" alt=\"Galeri Talenta {$i}\">";
+        echo "<img src=\"/outsource_talenta_landing/magangtalenta/assets/images/profil_gal_{$i}.jpg\" alt=\"Galeri Talenta {$i}\">";
     }
     ?>
 </div>

@@ -245,7 +245,7 @@ $totalUnits = count($unitList);
 
                     <td style="text-align: center;">
                         <div style="display: flex; gap: 5px; justify-content: center;">
-                            <a href="/talenta-semarang/page.php?slug=<?php echo htmlspecialchars($u['slug']); ?>" target="_blank" class="btn btn-sm btn-outline" title="Lihat di Website">
+                            <a href="/outsource_talenta_landing/magangtalenta/page.php?slug=<?php echo htmlspecialchars($u['slug']); ?>" target="_blank" class="btn btn-sm btn-outline" title="Lihat di Website">
                                 <i class="fas fa-external-link-alt"></i>
                             </a>
                             <a href="<?php echo ($u['category'] === 'pendidikan') ? 'kelola_sekolah.php' : 'kelola_psikologi.php'; ?>?edit=<?php echo $u['id']; ?>" class="btn btn-sm btn-primary" title="Edit Konten Unit">

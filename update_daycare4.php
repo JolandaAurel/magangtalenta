@@ -30,8 +30,8 @@ $html = '
 
 <div class="daycare-wrapper">
     <div class="daycare-images">
-        <img src="/talenta-semarang/assets/images/daycare_img1.png" alt="Anak Bermain Balok" style="aspect-ratio: 4/3;">
-        <img src="/talenta-semarang/assets/images/daycare_img2.png" alt="Anak Bermain Bersama Guru" style="aspect-ratio: 4/3;">
+        <img src="/outsource_talenta_landing/magangtalenta/assets/images/daycare_img1.png" alt="Anak Bermain Balok" style="aspect-ratio: 4/3;">
+        <img src="/outsource_talenta_landing/magangtalenta/assets/images/daycare_img2.png" alt="Anak Bermain Bersama Guru" style="aspect-ratio: 4/3;">
     </div>
     
     <div class="daycare-content daycare-text">
@@ -51,28 +51,28 @@ $html = '
 
 <div class="cards-section">
     <div class="info-card">
-        <img src="/talenta-semarang/assets/images/card_babyclass.png" alt="Baby Class">
+        <img src="/outsource_talenta_landing/magangtalenta/assets/images/card_babyclass.png" alt="Baby Class">
         <div class="info-card-body">
             <h3>Baby Class</h3>
             <p>Untuk Usia 0 - 2 th</p>
         </div>
     </div>
     <div class="info-card">
-        <img src="/talenta-semarang/assets/images/card_playgroup.png" alt="Play Group">
+        <img src="/outsource_talenta_landing/magangtalenta/assets/images/card_playgroup.png" alt="Play Group">
         <div class="info-card-body">
             <h3>Play Group</h3>
             <p>Untuk Usia 2 - 4 th</p>
         </div>
     </div>
     <div class="info-card">
-        <img src="/talenta-semarang/assets/images/card_tka.png" alt="TK A">
+        <img src="/outsource_talenta_landing/magangtalenta/assets/images/card_tka.png" alt="TK A">
         <div class="info-card-body">
             <h3>TK A</h3>
             <p>Untuk Usia 4 - 5 th</p>
         </div>
     </div>
     <div class="info-card">
-        <img src="/talenta-semarang/assets/images/card_tkb.png" alt="TK B">
+        <img src="/outsource_talenta_landing/magangtalenta/assets/images/card_tkb.png" alt="TK B">
         <div class="info-card-body">
             <h3>TK B</h3>
             <p>Untuk Usia 5 - 6 th</p>

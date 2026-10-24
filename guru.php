@@ -12,7 +12,7 @@ natsort($guru_images);
     .profil-banner {
         width: 100%;
         height: 250px;
-        background: url('/talenta-semarang/assets/images/header-bg.png') center/cover;
+        background: url('/outsource_talenta_landing/magangtalenta/assets/images/header-bg.png') center/cover;
         position: relative;
         margin-top: 80px; 
     }
@@ -139,7 +139,7 @@ natsort($guru_images);
         <div class="toolbar-left">
             <span>Fun and Active Learning</span>
             <span style="color: #cbd5e1;">|</span>
-            <span><a href="/talenta-semarang/" class="home-link"><i class="fas fa-home"></i> Home</a> / Guru</span>
+            <span><a href="/outsource_talenta_landing/magangtalenta/" class="home-link"><i class="fas fa-home"></i> Home</a> / Guru</span>
         </div>
         
     </div>
@@ -161,8 +161,8 @@ natsort($guru_images);
         <?php else: ?>
             <?php foreach($guru_images as $img): ?>
                 <div class="guru-card">
-                    <a href="/talenta-semarang/<?php echo $img; ?>" data-lightbox="guru-gallery">
-                        <img src="/talenta-semarang/<?php echo $img; ?>" alt="Guru Talenta">
+                    <a href="/outsource_talenta_landing/magangtalenta/<?php echo $img; ?>" data-lightbox="guru-gallery">
+                        <img src="/outsource_talenta_landing/magangtalenta/<?php echo $img; ?>" alt="Guru Talenta">
                     </a>
                 </div>
             <?php endforeach; ?>

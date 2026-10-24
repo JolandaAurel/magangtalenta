@@ -343,7 +343,7 @@ if ($editData) {
         </h2>
     </div>
     <div style="display: flex; gap: 10px; align-items: center;">
-        <a href="/talenta-semarang/page.php?slug=<?php echo htmlspecialchars($editData->slug); ?>" target="_blank" class="btn btn-outline" style="font-weight: 600;">
+        <a href="/outsource_talenta_landing/magangtalenta/page.php?slug=<?php echo htmlspecialchars($editData->slug); ?>" target="_blank" class="btn btn-outline" style="font-weight: 600;">
             <i class="fas fa-external-link-alt"></i> Pratinjau Tampilan User
         </a>
         <?php if ($_SESSION['admin_type'] === 'super'): ?>
@@ -405,7 +405,7 @@ if ($editData) {
             <button type="submit" class="btn btn-primary" style="padding: 12px 25px; font-weight: 600;">
                 <i class="fas fa-save"></i> Simpan Konten Tentang
             </button>
-            <a href="/talenta-semarang/page.php?slug=<?php echo htmlspecialchars($editData->slug); ?>" target="_blank" class="btn btn-outline" style="padding: 12px 20px;">
+            <a href="/outsource_talenta_landing/magangtalenta/page.php?slug=<?php echo htmlspecialchars($editData->slug); ?>" target="_blank" class="btn btn-outline" style="padding: 12px 20px;">
                 <i class="fas fa-eye"></i> Lihat Hasil di Halaman User
             </a>
         </div>
@@ -826,7 +826,7 @@ window.onclick = function(e) {
                 <a href="kelola_sekolah.php?edit=<?php echo $p->id; ?>" class="btn btn-primary" style="flex: 1; text-align: center; font-weight: 600;">
                     <i class="fas fa-edit"></i> Kelola Unit
                 </a>
-                <a href="/talenta-semarang/page.php?slug=<?php echo htmlspecialchars($p->slug); ?>" target="_blank" class="btn btn-outline" title="Lihat Tampilan User">
+                <a href="/outsource_talenta_landing/magangtalenta/page.php?slug=<?php echo htmlspecialchars($p->slug); ?>" target="_blank" class="btn btn-outline" title="Lihat Tampilan User">
                     <i class="fas fa-external-link-alt"></i>
                 </a>
             </div>

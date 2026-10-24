@@ -48,7 +48,7 @@ require_once 'includes/header.php';
 </style>
 
 <div class="berita-banner-container">
-    <img src="/talenta-semarang/assets/images/berita_banner.png" alt="Banner Berita dan Kegiatan Talenta" class="berita-banner-img">
+    <img src="/outsource_talenta_landing/magangtalenta/assets/images/berita_banner.png" alt="Banner Berita dan Kegiatan Talenta" class="berita-banner-img">
 </div>
 
 <div style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; margin-bottom: 50px;">
@@ -56,7 +56,7 @@ require_once 'includes/header.php';
         <div class="toolbar-left">
             <span>Fun and Active Learning</span>
             <span style="color: #cbd5e1;">|</span>
-            <span><a href="/talenta-semarang/" class="home-link"><i class="fas fa-home"></i> Home</a> / Berita & Kegiatan</span>
+            <span><a href="/outsource_talenta_landing/magangtalenta/" class="home-link"><i class="fas fa-home"></i> Home</a> / Berita & Kegiatan</span>
         </div>
         
     </div>
@@ -65,7 +65,7 @@ require_once 'includes/header.php';
 <section class="berita-section">
     <div class="berita-container">
         <div class="berita-image">
-            <img src="/talenta-semarang/assets/images/berita-kegiatan-sam-poo-kong.png" alt="Acara Periodik Talenta Semarang">
+            <img src="/outsource_talenta_landing/magangtalenta/assets/images/berita-kegiatan-sam-poo-kong.png" alt="Acara Periodik Talenta Semarang">
         </div>
         <div class="berita-content">
             <h2 class="berita-title">Acara Periodik</h2>

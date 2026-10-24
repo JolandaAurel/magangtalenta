@@ -119,7 +119,7 @@ $articles = $stmt->fetchAll();
             <tbody>
                 <?php foreach($articles as $a): ?>
                 <tr>
-                    <td><img src="/talenta-semarang/assets/images/<?php echo $a['featured_image']; ?>" style="width: 80px; height: 50px; object-fit: cover; border-radius: 4px;"></td>
+                    <td><img src="/outsource_talenta_landing/magangtalenta/assets/images/<?php echo $a['featured_image']; ?>" style="width: 80px; height: 50px; object-fit: cover; border-radius: 4px;"></td>
                     <td><strong><?php echo htmlspecialchars($a['title']); ?></strong></td>
                     <td><?php echo date('d M Y', strtotime($a['published_at'])); ?></td>
                     <td>

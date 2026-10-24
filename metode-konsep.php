@@ -7,7 +7,7 @@ require_once 'includes/header.php';
     .profil-banner {
         width: 100%;
         height: 250px;
-        background: url('/talenta-semarang/assets/images/header-bg.png') center/cover;
+        background: url('/outsource_talenta_landing/magangtalenta/assets/images/header-bg.png') center/cover;
         position: relative;
         margin-top: 80px; 
     }
@@ -134,7 +134,7 @@ require_once 'includes/header.php';
         <div class="toolbar-left">
             <span>Fun and Active Learning</span>
             <span style="color: #cbd5e1;">|</span>
-            <span><a href="/talenta-semarang/" class="home-link"><i class="fas fa-home"></i> Home</a> / Metode & Konsep Pengajaran</span>
+            <span><a href="/outsource_talenta_landing/magangtalenta/" class="home-link"><i class="fas fa-home"></i> Home</a> / Metode & Konsep Pengajaran</span>
         </div>
         
     </div>
@@ -156,8 +156,8 @@ require_once 'includes/header.php';
             <p>Setiap hari sebelum mulai pembelajaran semua anak mengikuti kegiatan morning devotion sesuai dengan agama anak.</p>
         </div>
         <div class="img-grid-2">
-            <img src="/talenta-semarang/assets/images/sentra_1_a.png" alt="Sentra Keimanan 1" class="sentra-img">
-            <img src="/talenta-semarang/assets/images/sentra_1_b.png" alt="Sentra Keimanan 2" class="sentra-img">
+            <img src="/outsource_talenta_landing/magangtalenta/assets/images/sentra_1_a.png" alt="Sentra Keimanan 1" class="sentra-img">
+            <img src="/outsource_talenta_landing/magangtalenta/assets/images/sentra_1_b.png" alt="Sentra Keimanan 2" class="sentra-img">
         </div>
     </div>
 
@@ -168,8 +168,8 @@ require_once 'includes/header.php';
             <p>Sentra bahan alam merupakan berbagai kegiatan pembelajaran yang berfungsi untuk meningkatkan kemampuan sensorimotorik, melakukan percobaan sederhana dan meningkatkan rasa cinta kepada alam.</p>
         </div>
         <div class="img-grid-2">
-            <img src="/talenta-semarang/assets/images/sentra_2_a.png" alt="Sentra Bahan Alam 1" class="sentra-img">
-            <img src="/talenta-semarang/assets/images/sentra_2_b.png" alt="Sentra Bahan Alam 2" class="sentra-img">
+            <img src="/outsource_talenta_landing/magangtalenta/assets/images/sentra_2_a.png" alt="Sentra Bahan Alam 1" class="sentra-img">
+            <img src="/outsource_talenta_landing/magangtalenta/assets/images/sentra_2_b.png" alt="Sentra Bahan Alam 2" class="sentra-img">
         </div>
     </div>
 
@@ -180,7 +180,7 @@ require_once 'includes/header.php';
             <p>Sentra seni bertujuan untuk memberikan kesempatan kepada peserta didik untuk mengembangkan bakat, minat dan keterampilannya. Seperti contoh keterampilan tangan, disini peserta didik diajarkan untuk melipat, menggunting, mengelem, mewarnai, membuat prakarya, dll. Di sentra ini anak meningkatkan kemampuan motorik halus, bermain sambil belajar mengasah rasa keindahan, membangun kemandirian, kerja sama dan tanggung jawab.</p>
         </div>
         <div class="img-single">
-            <img src="/talenta-semarang/assets/images/sentra_3.png" alt="Sentra Seni" class="sentra-img">
+            <img src="/outsource_talenta_landing/magangtalenta/assets/images/sentra_3.png" alt="Sentra Seni" class="sentra-img">
         </div>
     </div>
 
@@ -191,8 +191,8 @@ require_once 'includes/header.php';
             <p>Sentra bermain peran sangat mendukung peserta didik pada perkembangan bahasa dan interaksi sosial.</p>
         </div>
         <div class="img-grid-2">
-            <img src="/talenta-semarang/assets/images/sentra_4_a.png" alt="Sentra Bermain Peran 1" class="sentra-img">
-            <img src="/talenta-semarang/assets/images/sentra_4_b.png" alt="Sentra Bermain Peran 2" class="sentra-img">
+            <img src="/outsource_talenta_landing/magangtalenta/assets/images/sentra_4_a.png" alt="Sentra Bermain Peran 1" class="sentra-img">
+            <img src="/outsource_talenta_landing/magangtalenta/assets/images/sentra_4_b.png" alt="Sentra Bermain Peran 2" class="sentra-img">
         </div>
     </div>
 
@@ -203,7 +203,7 @@ require_once 'includes/header.php';
             <p>Sentra balok ini membantu perkembangan anak dalam mengembangkan kemampuan visual dan matematika peserta anak usia dini.</p>
         </div>
         <div class="img-single">
-            <img src="/talenta-semarang/assets/images/sentra_5.png" alt="Sentra Balok" class="sentra-img">
+            <img src="/outsource_talenta_landing/magangtalenta/assets/images/sentra_5.png" alt="Sentra Balok" class="sentra-img">
         </div>
     </div>
 
@@ -214,9 +214,9 @@ require_once 'includes/header.php';
             <p>Sentra persiapan menstimulasi anak untuk mengembangkan kemampuan baca, tulis dan hitung. Pembelajaran dengan pendekatan bermain keaksaraan yang menyenangkan.</p>
         </div>
         <div class="img-grid-3">
-            <img src="/talenta-semarang/assets/images/sentra_6_a.png" alt="Sentra Persiapan 1" class="sentra-img">
-            <img src="/talenta-semarang/assets/images/sentra_6_b.png" alt="Sentra Persiapan 2" class="sentra-img">
-            <img src="/talenta-semarang/assets/images/sentra_6_c.png" alt="Sentra Persiapan 3" class="sentra-img">
+            <img src="/outsource_talenta_landing/magangtalenta/assets/images/sentra_6_a.png" alt="Sentra Persiapan 1" class="sentra-img">
+            <img src="/outsource_talenta_landing/magangtalenta/assets/images/sentra_6_b.png" alt="Sentra Persiapan 2" class="sentra-img">
+            <img src="/outsource_talenta_landing/magangtalenta/assets/images/sentra_6_c.png" alt="Sentra Persiapan 3" class="sentra-img">
         </div>
     </div>
 

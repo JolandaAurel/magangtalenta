@@ -308,7 +308,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="login-footer-links">
             <div>
-                <a href="/talenta-semarang/">
+                <a href="/outsource_talenta_landing/magangtalenta/">
                     <i class="fas fa-arrow-left"></i> Kembali ke Website Utama
                 </a>
             </div>

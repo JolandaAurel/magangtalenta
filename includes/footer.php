@@ -4,7 +4,7 @@
 <style>
     .footer-premium {
         position: relative;
-        background: url('/talenta-semarang/assets/images/footer_bg_clean2.png') no-repeat center bottom;
+        background: url('/outsource_talenta_landing/magangtalenta/assets/images/footer_bg_clean2.png') no-repeat center bottom;
         background-size: cover;
         padding-top: 60px; /* Reduced from 130px to pull text up */
         color: #0f3c5c;
@@ -160,13 +160,24 @@
     @media (max-width: 992px) {
         .footer-content {
             grid-template-columns: 1fr 1fr;
-            padding-bottom: 80px;
+            padding: 0 30px 80px;
+            gap: 30px;
         }
         .footer-premium { padding-top: 40px; }
     }
     @media (max-width: 576px) {
         .footer-content {
             grid-template-columns: 1fr;
+            padding: 0 20px 90px;
+            gap: 35px;
+        }
+        .footer-heading {
+            font-size: 1.05rem;
+            padding: 8px 18px;
+        }
+        .footer-bottom {
+            padding: 15px 20px;
+            font-size: 0.85rem;
         }
     }
 </style>
@@ -175,7 +186,7 @@
     <div class="footer-content">
         <!-- Kolom 1: Logo -->
         <div class="footer-col-1">
-            <img src="/talenta-semarang/assets/images/logo.png" alt="Talenta Semarang">
+            <img src="/outsource_talenta_landing/magangtalenta/assets/images/logo.png" alt="Talenta Semarang">
             <div class="footer-motto">Murid Hebat, Masa Depan Kuat</div>
             <div class="footer-socials">
                 <a href="#"><i class="fab fa-instagram"></i></a>
@@ -207,11 +218,11 @@
             <div class="footer-heading"><i class="far fa-file-alt" style="color: #0070ad;"></i> Artikel Terbaru</div>
             <div class="footer-article-list">
                 <a href="#" class="footer-article-item">
-                    <img src="/talenta-semarang/assets/images/hero_kids_new.png" class="footer-article-img" alt="Anak Terlambat Bicara">
+                    <img src="/outsource_talenta_landing/magangtalenta/assets/images/hero_kids_new.png" class="footer-article-img" alt="Anak Terlambat Bicara">
                     <span class="footer-article-title">Anak Terlambat Bicara</span>
                 </a>
                 <a href="#" class="footer-article-item">
-                    <img src="/talenta-semarang/assets/images/hero-bg-cropped.png" class="footer-article-img" alt="Anak Berkebutuhan Khusus">
+                    <img src="/outsource_talenta_landing/magangtalenta/assets/images/hero-bg-cropped.png" class="footer-article-img" alt="Anak Berkebutuhan Khusus">
                     <span class="footer-article-title">Anak Berkebutuhan Khusus</span>
                 </a>
             </div>

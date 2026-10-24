@@ -101,7 +101,7 @@ $galleries = $stmt->fetchAll();
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;">
             <?php foreach($galleries as $g): ?>
             <div style="position: relative; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
-                <img src="/talenta-semarang/assets/images/<?php echo $g['image_file']; ?>" style="width: 100%; aspect-ratio: 1; object-fit: cover; display: block;">
+                <img src="/outsource_talenta_landing/magangtalenta/assets/images/<?php echo $g['image_file']; ?>" style="width: 100%; aspect-ratio: 1; object-fit: cover; display: block;">
                 <div style="padding: 10px; background: white; text-align: center;">
                     <a href="?delete=<?php echo $g['id']; ?>&slug=<?php echo $selected_slug; ?>" class="btn btn-danger" style="font-size: 0.8rem; padding: 4px 8px; width: 100%;" onclick="return confirm('Hapus foto ini?');"><i class="fas fa-trash"></i> Hapus</a>
                 </div>

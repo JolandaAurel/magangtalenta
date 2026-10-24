@@ -122,7 +122,7 @@ if (!empty($q)) {
         </div>
     <?php elseif (count($results) > 0): ?>
         <?php foreach($results as $res): 
-            $url = "/talenta-semarang/" . $res->url_prefix . urlencode($res->slug);
+            $url = "/outsource_talenta_landing/magangtalenta/" . $res->url_prefix . urlencode($res->slug);
             
             // Generate snippet by stripping tags and getting first 150 chars
             $snippet = strip_tags($res->content);

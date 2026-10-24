@@ -14,7 +14,7 @@ $page = $stmt->fetch();
     .profil-banner {
         width: 100%;
         height: 250px;
-        background: url('/talenta-semarang/assets/images/header-bg.png') center/cover;
+        background: url('/outsource_talenta_landing/magangtalenta/assets/images/header-bg.png') center/cover;
         position: relative;
         margin-top: 80px; 
     }
@@ -119,7 +119,7 @@ $page = $stmt->fetch();
 
 <!-- Banner Placeholder -->
 <div class="page-banner-container" style="width: 100%; margin-top: 80px; line-height: 0;">
-    <img src="/talenta-semarang/assets/images/visi_misi_banner.png?v=<?php echo time(); ?>" alt="Visi & Misi" style="width: 100%; height: auto; display: block;">
+    <img src="/outsource_talenta_landing/magangtalenta/assets/images/visi_misi_banner.png?v=<?php echo time(); ?>" alt="Visi & Misi" style="width: 100%; height: auto; display: block;">
 </div>
 
 <!-- Toolbar / Breadcrumb area -->
@@ -128,7 +128,7 @@ $page = $stmt->fetch();
         <div class="toolbar-left">
             <span>Fun and Active Learning</span>
             <span style="color: #cbd5e1;">|</span>
-            <span><a href="/talenta-semarang/" class="home-link"><i class="fas fa-home"></i> Home</a> / Visi & Misi</span>
+            <span><a href="/outsource_talenta_landing/magangtalenta/" class="home-link"><i class="fas fa-home"></i> Home</a> / Visi & Misi</span>
         </div>
         
     </div>
@@ -137,9 +137,9 @@ $page = $stmt->fetch();
 <div class="visi-content-wrapper">
     
     <div class="image-stack">
-        <img src="/talenta-semarang/assets/images/visi-final-1.png" alt="Kegiatan Guru Talenta 1">
-        <img src="/talenta-semarang/assets/images/visi-final-2.png" alt="Kegiatan Guru Talenta 2">
-        <img src="/talenta-semarang/assets/images/visi-final-3.png" alt="Kegiatan Guru Talenta 3">
+        <img src="/outsource_talenta_landing/magangtalenta/assets/images/visi-final-1.png" alt="Kegiatan Guru Talenta 1">
+        <img src="/outsource_talenta_landing/magangtalenta/assets/images/visi-final-2.png" alt="Kegiatan Guru Talenta 2">
+        <img src="/outsource_talenta_landing/magangtalenta/assets/images/visi-final-3.png" alt="Kegiatan Guru Talenta 3">
     </div>
     
     <div class="visi-text">

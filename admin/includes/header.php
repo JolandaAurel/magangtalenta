@@ -141,7 +141,7 @@ $currentTab = $_GET['tab'] ?? '';
                 <?php endif; ?>
             </div>
             <div style="display: flex; align-items: center; gap: 10px;">
-                <a href="/talenta-semarang/" target="_blank" class="btn btn-primary"><i class="fas fa-external-link-alt"></i> Lihat Website</a>
+                <a href="/outsource_talenta_landing/magangtalenta/" target="_blank" class="btn btn-primary"><i class="fas fa-external-link-alt"></i> Lihat Website</a>
                 <a href="logout.php" class="btn btn-outline" style="color: #ef4444; border-color: #fca5a5;"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </div>
         </div>

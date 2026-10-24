@@ -1,28 +1,29 @@
 <?php
 require_once 'includes/header.php';
 
-// Helper function to upload images
-function handleImageUpload($fileKey, $targetDir = '../assets/images/') {
-    if (!isset($_FILES[$fileKey]) || $_FILES[$fileKey]['error'] !== UPLOAD_ERR_OK) {
+if (!function_exists('handleImageUpload')) {
+    function handleImageUpload($fileKey, $targetDir = '../assets/images/') {
+        if (!isset($_FILES[$fileKey]) || $_FILES[$fileKey]['error'] !== UPLOAD_ERR_OK) {
+            return null;
+        }
+        $tmpName = $_FILES[$fileKey]['tmp_name'];
+        $origName = $_FILES[$fileKey]['name'];
+        $ext = strtolower(pathinfo($origName, PATHINFO_EXTENSION));
+        $allowed = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+        if (!in_array($ext, $allowed)) {
+            return null;
+        }
+        $newName = 'psi_' . time() . '_' . rand(100, 999) . '.' . $ext;
+        if (move_uploaded_file($tmpName, $targetDir . $newName)) {
+            return $newName;
+        }
         return null;
     }
-    $tmpName = $_FILES[$fileKey]['tmp_name'];
-    $origName = $_FILES[$fileKey]['name'];
-    $ext = strtolower(pathinfo($origName, PATHINFO_EXTENSION));
-    $allowed = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
-    if (!in_array($ext, $allowed)) {
-        return null;
-    }
-    $newName = 'psi_' . time() . '_' . rand(100, 999) . '.' . $ext;
-    if (move_uploaded_file($tmpName, $targetDir . $newName)) {
-        return $newName;
-    }
-    return null;
 }
 
 $success = '';
 $error = '';
-$activeTab = $_GET['tab'] ?? 'konten'; // 'konten', 'banner', 'galeri'
+$activeTab = $_GET['tab'] ?? 'konten'; // 'konten', 'banner', 'staff', 'galeri', 'kontak'
 
 // Determine which service to edit
 $editId = isset($_GET['edit']) ? (int)$_GET['edit'] : 0;
@@ -52,9 +53,9 @@ if ($editData && $_SESSION['admin_type'] !== 'super' && $editData->slug !== $_SE
 }
 
 // =========================================================================
-// POST ACTIONS: EDIT KONTEN, GANTI BANNER, GANTI FOTO UTAMA, KELOLA GALERI
+// POST ACTIONS: EDIT KONTEN, BANNER, FOTO UTAMA, STAFF, GALERI, KONTAK
 // =========================================================================
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     $action = $_POST['action'] ?? '';
 
     // 1. TAMBAH LAYANAN BARU (SUPER ADMIN ONLY)
@@ -91,8 +92,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Seed 3 default galleries
             $pdo->prepare("INSERT INTO page_galleries (page_slug, image_file, category, caption, sort_order) VALUES 
                 (?, 'psikologi_2.png', 'aktivitas', 'Seminar & Edukasi Parenting Talenta', 1),
-                (?, 'psikologi_3.png', 'aktivitas', 'Peserta Konsultasi & Intervensi Tumbuh Kembang', 2),
-                (?, 'psikologi_4.png', 'aktivitas', 'Dokumentasi Bersama Tim Psikolog & Peserta', 3)")->execute([$slug, $slug, $slug]);
+                (?, 'psikologi_3.png', 'fasilitas', 'Peserta Konsultasi & Intervensi Tumbuh Kembang', 2),
+                (?, 'psikologi_4.png', 'prestasi', 'Dokumentasi Bersama Tim Psikolog & Peserta', 3)")->execute([$slug, $slug, $slug]);
+
+            // Seed default contacts
+            $pdo->prepare("INSERT INTO unit_contacts (unit_slug, whatsapp, instagram, email, facebook, tiktok, youtube, address) VALUES 
+                (?, '0817-838-939', '@talentasemarang', ?, 'Layanan Psikologi Talenta Semarang', '@talentasemarang', 'Sekolah Talenta Semarang', 'Jl. Puspowarno Tengah IX No.6, Semarang Barat')")
+                ->execute([$slug, !empty($email) ? $email : $slug . '@talentasemarang.com']);
 
             // Add Admin User if provided
             if (!empty($email) && !empty($password)) {
@@ -148,13 +154,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $activeTab = 'banner';
     }
 
-    // 5. TAMBAH FOTO GALERI
+    // 5. TAMBAH STAFF / TERAPIS
+    elseif ($action === 'add_staff' && $editData) {
+        $name = trim($_POST['name'] ?? '');
+        $position = trim($_POST['position'] ?? '');
+        $bio = trim($_POST['bio'] ?? '');
+        $photoName = handleImageUpload('photo');
+        if (!$photoName) {
+            $photoName = 'guru_1.png';
+        }
+
+        if (empty($name) || empty($position)) {
+            $error = "Nama dan jabatan staf/terapis wajib diisi!";
+        } else {
+            $insStaff = $pdo->prepare("INSERT INTO unit_staff (unit_slug, name, position, photo, bio) VALUES (?, ?, ?, ?, ?)");
+            $insStaff->execute([$editData->slug, $name, $position, $photoName, $bio]);
+            $success = "Staff/Terapis baru '$name' berhasil ditambahkan!";
+        }
+        $activeTab = 'staff';
+    }
+
+    // 6. EDIT STAFF / TERAPIS
+    elseif ($action === 'edit_staff' && $editData) {
+        $staffId = (int)$_POST['staff_id'];
+        $name = trim($_POST['name'] ?? '');
+        $position = trim($_POST['position'] ?? '');
+        $bio = trim($_POST['bio'] ?? '');
+
+        $newPhoto = handleImageUpload('photo');
+        if ($newPhoto) {
+            $upd = $pdo->prepare("UPDATE unit_staff SET name = ?, position = ?, photo = ?, bio = ? WHERE id = ? AND unit_slug = ?");
+            $upd->execute([$name, $position, $newPhoto, $bio, $staffId, $editData->slug]);
+        } else {
+            $upd = $pdo->prepare("UPDATE unit_staff SET name = ?, position = ?, bio = ? WHERE id = ? AND unit_slug = ?");
+            $upd->execute([$name, $position, $bio, $staffId, $editData->slug]);
+        }
+        $success = "Data staf/terapis '$name' berhasil diperbarui!";
+        $activeTab = 'staff';
+    }
+
+    // 7. TAMBAH FOTO GALERI
     elseif ($action === 'add_gallery' && $editData) {
         $caption = trim($_POST['caption'] ?? '');
+        $category = strtolower(trim($_POST['category'] ?? 'aktivitas'));
         $newImg = handleImageUpload('gallery_file');
         if ($newImg) {
-            $ins = $pdo->prepare("INSERT INTO page_galleries (page_slug, image_file, category, caption) VALUES (?, ?, 'aktivitas', ?)");
-            $ins->execute([$editData->slug, $newImg, $caption]);
+            $ins = $pdo->prepare("INSERT INTO page_galleries (page_slug, image_file, category, caption) VALUES (?, ?, ?, ?)");
+            $ins->execute([$editData->slug, $newImg, $category, $caption]);
             $success = "Foto dokumentasi baru berhasil ditambahkan ke galeri!";
         } else {
             $error = "Pilih file foto yang valid (JPG, PNG, WebP)!";
@@ -162,25 +208,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $activeTab = 'galeri';
     }
 
-    // 6. EDIT / GANTI FOTO GALERI
+    // 8. EDIT / GANTI FOTO GALERI
     elseif ($action === 'edit_gallery' && $editData) {
         $galId = (int)$_POST['gallery_id'];
         $caption = trim($_POST['caption'] ?? '');
+        $category = strtolower(trim($_POST['category'] ?? 'aktivitas'));
         $replacementImg = handleImageUpload('gallery_file');
 
         if ($replacementImg) {
-            $upd = $pdo->prepare("UPDATE page_galleries SET image_file = ?, caption = ? WHERE id = ? AND page_slug = ?");
-            $upd->execute([$replacementImg, $caption, $galId, $editData->slug]);
+            $upd = $pdo->prepare("UPDATE page_galleries SET image_file = ?, category = ?, caption = ? WHERE id = ? AND page_slug = ?");
+            $upd->execute([$replacementImg, $category, $caption, $galId, $editData->slug]);
         } else {
-            $upd = $pdo->prepare("UPDATE page_galleries SET caption = ? WHERE id = ? AND page_slug = ?");
-            $upd->execute([$caption, $galId, $editData->slug]);
+            $upd = $pdo->prepare("UPDATE page_galleries SET category = ?, caption = ? WHERE id = ? AND page_slug = ?");
+            $upd->execute([$category, $caption, $galId, $editData->slug]);
         }
         $success = "Data foto galeri berhasil diperbarui!";
         $activeTab = 'galeri';
     }
+
+    // 9. SIMPAN KONTAK & SOSMED
+    elseif ($action === 'save_contacts' && $editData) {
+        $wa = trim($_POST['whatsapp'] ?? '');
+        $ig = trim($_POST['instagram'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $fb = trim($_POST['facebook'] ?? '');
+        $tiktok = trim($_POST['tiktok'] ?? '');
+        $yt = trim($_POST['youtube'] ?? '');
+        $addr = trim($_POST['address'] ?? '');
+
+        $insC = $pdo->prepare("INSERT INTO unit_contacts (unit_slug, whatsapp, instagram, email, facebook, tiktok, youtube, address) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?) 
+            ON DUPLICATE KEY UPDATE whatsapp = VALUES(whatsapp), instagram = VALUES(instagram), email = VALUES(email), facebook = VALUES(facebook), tiktok = VALUES(tiktok), youtube = VALUES(youtube), address = VALUES(address)");
+        $insC->execute([$editData->slug, $wa, $ig, $email, $fb, $tiktok, $yt, $addr]);
+        $success = "Kontak resmi unit {$editData->title} berhasil diperbarui!";
+        $activeTab = 'kontak';
+    }
 }
 
-// GET ACTIONS: DELETE SERVICE OR DELETE GALLERY
+// GET ACTIONS: DELETE SERVICE, DELETE STAFF, OR DELETE GALLERY
 if (isset($_GET['delete_service']) && $_SESSION['admin_type'] === 'super') {
     $delId = (int)$_GET['delete_service'];
     $sStmt = $pdo->prepare("SELECT slug, title FROM pages WHERE id = ? AND category = 'psikologi'");
@@ -190,9 +255,18 @@ if (isset($_GET['delete_service']) && $_SESSION['admin_type'] === 'super') {
     if ($srv) {
         $pdo->prepare("DELETE FROM pages WHERE id = ?")->execute([$delId]);
         $pdo->prepare("DELETE FROM page_galleries WHERE page_slug = ?")->execute([$srv->slug]);
+        $pdo->prepare("DELETE FROM unit_staff WHERE unit_slug = ?")->execute([$srv->slug]);
+        $pdo->prepare("DELETE FROM unit_contacts WHERE unit_slug = ?")->execute([$srv->slug]);
         $pdo->prepare("DELETE FROM admin_users WHERE unit_slug = ? AND role = 'psikologi'")->execute([$srv->slug]);
         $success = "Layanan '{$srv->title}' berhasil dihapus.";
     }
+}
+
+if ($editData && isset($_GET['delete_staff'])) {
+    $delId = (int)$_GET['delete_staff'];
+    $pdo->prepare("DELETE FROM unit_staff WHERE id = ? AND unit_slug = ?")->execute([$delId, $editData->slug]);
+    $success = "Staf/Terapis berhasil dihapus.";
+    $activeTab = 'staff';
 }
 
 if ($editData && isset($_GET['delete_gallery'])) {
@@ -202,12 +276,23 @@ if ($editData && isset($_GET['delete_gallery'])) {
     $activeTab = 'galeri';
 }
 
-// Fetch galleries if in edit mode
+// Fetch related data if in edit mode
+$staffList = [];
 $galleryList = [];
+$contacts = null;
+
 if ($editData) {
+    $sStmt = $pdo->prepare("SELECT * FROM unit_staff WHERE unit_slug = ? ORDER BY sort_order ASC, id ASC");
+    $sStmt->execute([$editData->slug]);
+    $staffList = $sStmt->fetchAll(PDO::FETCH_ASSOC);
+
     $gStmt = $pdo->prepare("SELECT * FROM page_galleries WHERE page_slug = ? ORDER BY sort_order ASC, id DESC");
     $gStmt->execute([$editData->slug]);
     $galleryList = $gStmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $cStmt = $pdo->prepare("SELECT * FROM unit_contacts WHERE unit_slug = ?");
+    $cStmt->execute([$editData->slug]);
+    $contacts = $cStmt->fetch(PDO::FETCH_ASSOC);
 } else {
     // Overview mode: Fetch all 10 Psikologi services
     $stmt = $pdo->query("SELECT p.*, LENGTH(p.content_html) as content_len FROM pages p WHERE p.category = 'psikologi' ORDER BY p.id ASC");
@@ -233,10 +318,10 @@ if ($editData) {
     flex-wrap: wrap;
 }
 .psi-tab-btn {
-    padding: 10px 20px;
+    padding: 10px 18px;
     border-radius: 10px;
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     color: #64748b;
     text-decoration: none;
     transition: all 0.2s ease;
@@ -270,6 +355,34 @@ if ($editData) {
     margin-bottom: 20px;
     flex-wrap: wrap;
     gap: 15px;
+}
+.staff-admin-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+}
+.staff-admin-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 22px 18px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.2s ease;
+}
+.staff-admin-card:hover {
+    transform: translateY(-3px);
+}
+.staff-admin-card img {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 12px;
+    border: 3px solid #ede9fe;
 }
 .gallery-admin-grid {
     display: grid;
@@ -316,6 +429,8 @@ if ($editData) {
     padding: 30px;
     box-shadow: 0 25px 50px rgba(0,0,0,0.2);
     position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
 }
 </style>
 
@@ -333,7 +448,7 @@ if ($editData) {
 
 <?php if ($editData): ?>
 <!-- ========================================================================= -->
-<!-- EDIT MODE: KONTEN TEKS, BANNER & FOTO UTAMA, SERTA GALERI FOTO -->
+<!-- EDIT MODE: 5 TABS SESUAI STRUKTUR HALAMAN USER -->
 <!-- ========================================================================= -->
 <div class="editor-header-bar">
     <div>
@@ -345,7 +460,7 @@ if ($editData) {
         </h2>
     </div>
     <div style="display: flex; gap: 10px; align-items: center;">
-        <a href="/talenta-semarang/page.php?slug=<?php echo htmlspecialchars($editData->slug); ?>" target="_blank" class="btn btn-outline" style="font-weight: 600;">
+        <a href="/outsource_talenta_landing/magangtalenta/page.php?slug=<?php echo htmlspecialchars($editData->slug); ?>" target="_blank" class="btn btn-outline" style="font-weight: 600;">
             <i class="fas fa-external-link-alt"></i> Pratinjau Tampilan User
         </a>
         <?php if ($_SESSION['admin_type'] === 'super'): ?>
@@ -356,16 +471,22 @@ if ($editData) {
     </div>
 </div>
 
-<!-- TABS NAVIGATION: KONTEN TEKS, BANNER & FOTO UTAMA, GALERI FOTO -->
+<!-- TABS NAVIGATION: KONTEN, BANNER, STAFF, GALERI, KONTAK -->
 <div class="psi-editor-nav">
     <a href="kelola_psikologi.php?edit=<?php echo $editData->id; ?>&tab=konten" class="psi-tab-btn <?php echo $activeTab === 'konten' ? 'active' : ''; ?>">
-        <i class="fas fa-file-alt"></i> 1. Konten Teks (WYSIWYG)
+        <i class="fas fa-file-alt"></i> 1. Konten Tentang (WYSIWYG)
     </a>
     <a href="kelola_psikologi.php?edit=<?php echo $editData->id; ?>&tab=banner" class="psi-tab-btn <?php echo $activeTab === 'banner' ? 'active' : ''; ?>">
-        <i class="fas fa-image"></i> 2. Banner & Foto Utama Layanan
+        <i class="fas fa-image"></i> 2. Banner & Foto Layanan
+    </a>
+    <a href="kelola_psikologi.php?edit=<?php echo $editData->id; ?>&tab=staff" class="psi-tab-btn <?php echo $activeTab === 'staff' ? 'active' : ''; ?>">
+        <i class="fas fa-user-md"></i> 3. Staff & Terapis <span class="psi-tab-count"><?php echo count($staffList); ?></span>
     </a>
     <a href="kelola_psikologi.php?edit=<?php echo $editData->id; ?>&tab=galeri" class="psi-tab-btn <?php echo $activeTab === 'galeri' ? 'active' : ''; ?>">
-        <i class="fas fa-images"></i> 3. Galeri Dokumentasi <span class="psi-tab-count"><?php echo count($galleryList); ?></span>
+        <i class="fas fa-images"></i> 4. Galeri Dokumentasi <span class="psi-tab-count"><?php echo count($galleryList); ?></span>
+    </a>
+    <a href="kelola_psikologi.php?edit=<?php echo $editData->id; ?>&tab=kontak" class="psi-tab-btn <?php echo $activeTab === 'kontak' ? 'active' : ''; ?>">
+        <i class="fas fa-address-book"></i> 5. Kontak & Sosmed
     </a>
 </div>
 
@@ -375,9 +496,9 @@ if ($editData) {
 <?php if ($activeTab === 'konten'): ?>
 <div class="card" style="border-left: 5px solid #7c3aed;">
     <div style="margin-bottom: 20px;">
-        <h3 style="color: #0F3C5C; margin: 0;"><i class="fas fa-edit" style="color: #7c3aed;"></i> Edit Konten Teks Layanan (WYSIWYG)</h3>
+        <h3 style="color: #0F3C5C; margin: 0;"><i class="fas fa-edit" style="color: #7c3aed;"></i> Edit Konten Tentang Layanan (WYSIWYG)</h3>
         <p style="color: #64748b; font-size: 0.9rem; margin: 4px 0 0 0;">
-            Gunakan editor visual di bawah ini untuk mengubah deskripsi, profil pendiri, program konsultasi, dan poin-poin layanan secara fleksibel.
+            Gunakan editor visual di bawah ini untuk mengubah deskripsi profil, tujuan layanan, dan poin-poin penanganan secara fleksibel.
         </p>
     </div>
 
@@ -398,7 +519,7 @@ if ($editData) {
             <button type="submit" class="btn btn-primary" style="background: #7c3aed; border-color: #7c3aed; padding: 12px 25px; font-weight: 600;">
                 <i class="fas fa-save"></i> Simpan Perubahan Teks
             </button>
-            <a href="/talenta-semarang/page.php?slug=<?php echo htmlspecialchars($editData->slug); ?>" target="_blank" class="btn btn-outline" style="padding: 12px 20px;">
+            <a href="/outsource_talenta_landing/magangtalenta/page.php?slug=<?php echo htmlspecialchars($editData->slug); ?>" target="_blank" class="btn btn-outline" style="padding: 12px 20px;">
                 <i class="fas fa-eye"></i> Lihat Hasil di Halaman User
             </a>
         </div>
@@ -470,7 +591,51 @@ if ($editData) {
 </div>
 
 <!-- ========================================================================= -->
-<!-- TAB 3: GALERI FOTO DOKUMENTASI -->
+<!-- TAB 3: STAFF & TERAPIS -->
+<!-- ========================================================================= -->
+<?php elseif ($activeTab === 'staff'): ?>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+    <div>
+        <h3 style="color: #0F3C5C; margin: 0;"><i class="fas fa-user-md" style="color: #7c3aed;"></i> Tim Psikolog & Terapis Layanan</h3>
+        <p style="color: #64748b; font-size: 0.9rem; margin: 4px 0 0 0;">
+            Kelola data nama dokter, psikolog, konselor, terapis, foto profil, dan keahlian/bio singkat yang tampil pada halaman user.
+        </p>
+    </div>
+    <button onclick="openAddStaffModal()" class="btn btn-success" style="box-shadow: 0 4px 12px rgba(16,185,129,0.3);">
+        <i class="fas fa-user-plus"></i> + Tambah Staff/Terapis Baru
+    </button>
+</div>
+
+<div class="staff-admin-grid">
+    <?php if (empty($staffList)): ?>
+        <div class="card" style="grid-column: 1/-1; text-align: center; color: #94a3b8; padding: 40px;">
+            <i class="fas fa-user-slash" style="font-size: 3rem; margin-bottom: 10px;"></i>
+            <p>Belum ada psikolog/terapis yang ditambahkan untuk layanan ini.</p>
+        </div>
+    <?php else: ?>
+        <?php foreach ($staffList as $st): ?>
+        <div class="staff-admin-card">
+            <img src="../assets/images/<?php echo htmlspecialchars($st['photo']); ?>" alt="<?php echo htmlspecialchars($st['name']); ?>">
+            <h4 style="margin: 0 0 4px 0; color: #0F3C5C; font-size: 1.05rem;"><?php echo htmlspecialchars($st['name']); ?></h4>
+            <span class="badge badge-purple" style="margin-bottom: 10px;"><?php echo htmlspecialchars($st['position']); ?></span>
+            <p style="font-size: 0.85rem; color: #64748b; margin: 0 0 15px 0; line-height: 1.5;">
+                <?php echo htmlspecialchars($st['bio'] ?? '-'); ?>
+            </p>
+            <div style="display: flex; gap: 8px; width: 100%; justify-content: center; margin-top: auto;">
+                <button onclick='openEditStaffModal(<?php echo json_encode($st); ?>)' class="btn btn-sm btn-primary" style="background:#7c3aed; border-color:#7c3aed;">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
+                <a href="kelola_psikologi.php?edit=<?php echo $editData->id; ?>&tab=staff&delete_staff=<?php echo $st['id']; ?>" onclick="return confirm('Hapus staf/terapis <?php echo htmlspecialchars($st['name']); ?>?')" class="btn btn-sm btn-danger">
+                    <i class="fas fa-trash"></i> Hapus
+                </a>
+            </div>
+        </div>
+        <?php endforeach; ?>
+    <?php endif; ?>
+</div>
+
+<!-- ========================================================================= -->
+<!-- TAB 4: GALERI FOTO DOKUMENTASI -->
 <!-- ========================================================================= -->
 <?php elseif ($activeTab === 'galeri'): ?>
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
@@ -496,14 +661,14 @@ if ($editData) {
             <div class="gallery-admin-card">
                 <img src="../assets/images/<?php echo htmlspecialchars($gal['image_file']); ?>?v=<?php echo time(); ?>" alt="Dokumentasi">
                 <div style="padding: 14px;">
-                    <p style="font-size: 0.9rem; color: #334155; margin: 0 0 12px 0; font-weight: 600; min-height: 40px; line-height: 1.4;">
+                    <p style="font-size: 0.95rem; color: #334155; margin: 0 0 12px 0; font-weight: 600; min-height: 40px; line-height: 1.4;">
                         <?php echo htmlspecialchars($gal['caption'] ?: 'Tanpa Keterangan'); ?>
                     </p>
-                    <div style="display: flex; gap: 8px;">
-                        <button onclick='openEditGalModal(<?php echo json_encode($gal); ?>)' class="btn btn-sm btn-outline" style="flex: 1;">
+                    <div style="display: flex; gap: 8px; justify-content: flex-end;">
+                        <button onclick='openEditGalModal(<?php echo json_encode($gal); ?>)' class="btn btn-sm btn-primary" style="background: #7c3aed; border-color: #7c3aed;">
                             <i class="fas fa-edit"></i> Edit / Ganti
                         </button>
-                        <a href="kelola_psikologi.php?edit=<?php echo $editData->id; ?>&tab=galeri&delete_gallery=<?php echo $gal['id']; ?>" onclick="return confirm('Hapus foto ini?')" class="btn btn-sm btn-danger">
+                        <a href="kelola_psikologi.php?edit=<?php echo $editData->id; ?>&tab=galeri&delete_gallery=<?php echo $gal['id']; ?>" onclick="return confirm('Hapus foto ini dari galeri?')" class="btn btn-sm btn-danger">
                             <i class="fas fa-trash"></i>
                         </a>
                     </div>
@@ -512,28 +677,164 @@ if ($editData) {
         <?php endforeach; ?>
     <?php endif; ?>
 </div>
+
+<!-- ========================================================================= -->
+<!-- TAB 5: KONTAK & MEDIA SOSIAL -->
+<!-- ========================================================================= -->
+<?php elseif ($activeTab === 'kontak'): ?>
+<div class="card" style="border-left: 5px solid #10b981;">
+    <div style="margin-bottom: 20px;">
+        <h3 style="color: #0F3C5C; margin: 0;"><i class="fas fa-address-book" style="color: #10b981;"></i> Kontak Resmi & Media Sosial Layanan</h3>
+        <p style="color: #64748b; font-size: 0.9rem; margin: 4px 0 0 0;">
+            Data di bawah ini langsung terhubung dengan kotak informasi kontak yang tampil di halaman user.
+        </p>
+    </div>
+
+    <form method="POST">
+        <input type="hidden" name="action" value="save_contacts">
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="form-group">
+                <label><i class="fab fa-whatsapp" style="color:#25D366;"></i> Nomor WhatsApp Resmi</label>
+                <input type="text" name="whatsapp" class="form-control" value="<?php echo htmlspecialchars($contacts['whatsapp'] ?? '0817-838-939'); ?>" required>
+                <small style="color: #64748b;">Contoh: 0817-838-939</small>
+            </div>
+            <div class="form-group">
+                <label><i class="fab fa-instagram" style="color:#e1306c;"></i> Instagram Layanan</label>
+                <input type="text" name="instagram" class="form-control" value="<?php echo htmlspecialchars($contacts['instagram'] ?? '@talentasemarang'); ?>" required>
+                <small style="color: #64748b;">Contoh: @talentasemarang</small>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="form-group">
+                <label><i class="fas fa-envelope" style="color:#EA4335;"></i> Alamat Email Resmi</label>
+                <input type="email" name="email" class="form-control" value="<?php echo htmlspecialchars($contacts['email'] ?? $editData->slug . '@talentasemarang.com'); ?>" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fab fa-facebook-f" style="color:#1877F2;"></i> Facebook</label>
+                <input type="text" name="facebook" class="form-control" value="<?php echo htmlspecialchars($contacts['facebook'] ?? 'Layanan Psikologi Talenta Semarang'); ?>">
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="form-group">
+                <label><i class="fab fa-tiktok" style="color:#000000;"></i> TikTok</label>
+                <input type="text" name="tiktok" class="form-control" value="<?php echo htmlspecialchars($contacts['tiktok'] ?? '@talentasemarang'); ?>">
+            </div>
+            <div class="form-group">
+                <label><i class="fab fa-youtube" style="color:#FF0000;"></i> YouTube</label>
+                <input type="text" name="youtube" class="form-control" value="<?php echo htmlspecialchars($contacts['youtube'] ?? 'Sekolah Talenta Semarang'); ?>">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label><i class="fas fa-map-marker-alt" style="color:#ef4444;"></i> Alamat / Lokasi Pelayanan</label>
+            <textarea name="address" class="form-control" rows="2"><?php echo htmlspecialchars($contacts['address'] ?? 'Jl. Puspowarno Tengah IX No.6, Semarang Barat'); ?></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="padding: 12px 28px; font-weight: 600; margin-top: 10px; background: #7c3aed; border-color: #7c3aed;">
+            <i class="fas fa-save"></i> Simpan Kontak Layanan
+        </button>
+    </form>
+</div>
 <?php endif; ?>
+
+<!-- ========================================================================= -->
+<!-- MODALS FOR STAFF AND GALLERY -->
+<!-- ========================================================================= -->
+
+<!-- MODAL TAMBAH STAFF -->
+<div class="modal-admin-overlay" id="addStaffModal">
+    <div class="modal-admin-box">
+        <span onclick="closeAddStaffModal()" style="position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 1.4rem; color: #94a3b8;">&times;</span>
+        <h3 style="margin-top: 0; color: #0F3C5C;"><i class="fas fa-user-plus" style="color:#10b981;"></i> Tambah Staff/Terapis Baru</h3>
+        
+        <form method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="action" value="add_staff">
+            
+            <div class="form-group">
+                <label>Foto Staff / Terapis (JPG / PNG)</label>
+                <input type="file" name="photo" class="form-control" accept="image/*">
+                <small style="color:#64748b;">Disarankan foto rasio 1:1 (persegi).</small>
+            </div>
+            <div class="form-group">
+                <label>Nama Lengkap & Gelar <span style="color:#ef4444;">*</span></label>
+                <input type="text" name="name" class="form-control" placeholder="Contoh: dr. Maya Indrawati, Sp.KFR" required>
+            </div>
+            <div class="form-group">
+                <label>Jabatan / Peran Klinis <span style="color:#ef4444;">*</span></label>
+                <input type="text" name="position" class="form-control" placeholder="Contoh: Konsultan Medis & Terapis Anak" required>
+            </div>
+            <div class="form-group">
+                <label>Bio / Keterangan Keahlian</label>
+                <textarea name="bio" class="form-control" rows="2" placeholder="Contoh: Spesialisasi intervensi dini dan stimulasi sensori motorik."></textarea>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                <button type="button" onclick="closeAddStaffModal()" class="btn btn-secondary">Batal</button>
+                <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> Simpan Staff</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL EDIT STAFF -->
+<div class="modal-admin-overlay" id="editStaffModal">
+    <div class="modal-admin-box">
+        <span onclick="closeEditStaffModal()" style="position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 1.4rem; color: #94a3b8;">&times;</span>
+        <h3 style="margin-top: 0; color: #0F3C5C;"><i class="fas fa-user-edit" style="color:#7c3aed;"></i> Edit Data Staff/Terapis</h3>
+        
+        <form method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="action" value="edit_staff">
+            <input type="hidden" name="staff_id" id="edit_staff_id">
+            
+            <div class="form-group">
+                <label>Ganti Foto (Kosongkan bila tidak ingin mengganti)</label>
+                <input type="file" name="photo" class="form-control" accept="image/*">
+            </div>
+            <div class="form-group">
+                <label>Nama Lengkap & Gelar <span style="color:#ef4444;">*</span></label>
+                <input type="text" name="name" id="edit_staff_name" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Jabatan / Peran Klinis <span style="color:#ef4444;">*</span></label>
+                <input type="text" name="position" id="edit_staff_pos" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Bio / Keterangan Keahlian</label>
+                <textarea name="bio" id="edit_staff_bio" class="form-control" rows="2"></textarea>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                <button type="button" onclick="closeEditStaffModal()" class="btn btn-secondary">Batal</button>
+                <button type="submit" class="btn btn-primary" style="background:#7c3aed; border-color:#7c3aed;"><i class="fas fa-save"></i> Simpan Perubahan</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 <!-- MODAL TAMBAH FOTO GALERI -->
 <div class="modal-admin-overlay" id="addGalModal">
     <div class="modal-admin-box">
         <span onclick="closeAddGalModal()" style="position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 1.4rem; color: #94a3b8;">&times;</span>
-        <h3 style="margin-top: 0; color: #0F3C5C;"><i class="fas fa-cloud-upload-alt" style="color:#10b981;"></i> Tambah Foto Galeri</h3>
+        <h3 style="margin-top: 0; color: #0F3C5C;"><i class="fas fa-upload" style="color:#7c3aed;"></i> Tambah Foto Galeri Dokumentasi</h3>
         
         <form method="POST" enctype="multipart/form-data">
             <input type="hidden" name="action" value="add_gallery">
             
             <div class="form-group">
-                <label>Pilih File Foto (JPG, PNG, WebP) <span style="color:#ef4444;">*</span></label>
+                <label>Pilih File Foto (JPG / PNG / WebP) <span style="color:#ef4444;">*</span></label>
                 <input type="file" name="gallery_file" class="form-control" accept="image/*" required>
             </div>
+            <input type="hidden" name="category" value="aktivitas">
             <div class="form-group">
                 <label>Keterangan / Caption Foto</label>
-                <input type="text" name="caption" class="form-control" placeholder="Contoh: Sesi Outbound & Team Building Karyawan">
+                <input type="text" name="caption" class="form-control" placeholder="Contoh: Sesi Evaluasi & Konsultasi Perkembangan Anak">
             </div>
             <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
                 <button type="button" onclick="closeAddGalModal()" class="btn btn-secondary">Batal</button>
-                <button type="submit" class="btn btn-success"><i class="fas fa-upload"></i> Unggah Foto</button>
+                <button type="submit" class="btn btn-primary" style="background:#7c3aed; border-color:#7c3aed;"><i class="fas fa-upload"></i> Unggah Foto</button>
             </div>
         </form>
     </div>
@@ -543,7 +844,7 @@ if ($editData) {
 <div class="modal-admin-overlay" id="editGalModal">
     <div class="modal-admin-box">
         <span onclick="closeEditGalModal()" style="position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 1.4rem; color: #94a3b8;">&times;</span>
-        <h3 style="margin-top: 0; color: #0F3C5C;"><i class="fas fa-edit" style="color:#7c3aed;"></i> Edit / Ganti Foto Galeri</h3>
+        <h3 style="margin-top: 0; color: #0F3C5C;"><i class="fas fa-edit" style="color:#7c3aed;"></i> Edit Foto Galeri</h3>
         
         <form method="POST" enctype="multipart/form-data">
             <input type="hidden" name="action" value="edit_gallery">
@@ -553,6 +854,7 @@ if ($editData) {
                 <label>Ganti File Foto (Kosongkan jika hanya ingin ganti keterangan)</label>
                 <input type="file" name="gallery_file" class="form-control" accept="image/*">
             </div>
+            <input type="hidden" name="category" id="edit_gal_category" value="aktivitas">
             <div class="form-group">
                 <label>Keterangan / Caption Foto</label>
                 <input type="text" name="caption" id="edit_gal_caption" class="form-control">
@@ -584,11 +886,25 @@ $(document).ready(function() {
     });
 });
 
+function openAddStaffModal() { document.getElementById('addStaffModal').style.display = 'flex'; }
+function closeAddStaffModal() { document.getElementById('addStaffModal').style.display = 'none'; }
+function openEditStaffModal(staff) {
+    document.getElementById('edit_staff_id').value = staff.id;
+    document.getElementById('edit_staff_name').value = staff.name;
+    document.getElementById('edit_staff_pos').value = staff.position;
+    document.getElementById('edit_staff_bio').value = staff.bio || '';
+    document.getElementById('editStaffModal').style.display = 'flex';
+}
+function closeEditStaffModal() { document.getElementById('editStaffModal').style.display = 'none'; }
+
 function openAddGalModal() { document.getElementById('addGalModal').style.display = 'flex'; }
 function closeAddGalModal() { document.getElementById('addGalModal').style.display = 'none'; }
 function openEditGalModal(gal) {
     document.getElementById('edit_gal_id').value = gal.id;
     document.getElementById('edit_gal_caption').value = gal.caption || '';
+    if (document.getElementById('edit_gal_category')) {
+        document.getElementById('edit_gal_category').value = gal.category || 'aktivitas';
+    }
     document.getElementById('editGalModal').style.display = 'flex';
 }
 function closeEditGalModal() { document.getElementById('editGalModal').style.display = 'none'; }
@@ -610,7 +926,7 @@ window.onclick = function(e) {
             <i class="fas fa-brain" style="color: #8b5cf6;"></i> Kelola 10 Unit Layanan Psikologi & Terapi
         </h2>
         <p style="color: #64748b; margin: 5px 0 0 0; font-size: 0.95rem;">
-            Pilih salah satu layanan untuk mengubah <b>Konten Teks (WYSIWYG)</b>, <b>Banner Halaman</b>, <b>Foto Utama</b>, dan <b>Galeri Dokumentasi</b>.
+            Pilih salah satu layanan untuk mengubah <b>Konten Tentang</b>, <b>Banner Halaman</b>, <b>Staff & Terapis</b>, <b>Galeri Dokumentasi</b>, dan <b>Kontak</b>.
         </p>
     </div>
     <?php if ($_SESSION['admin_type'] === 'super'): ?>
@@ -633,6 +949,11 @@ window.onclick = function(e) {
         $gCount = $pdo->prepare("SELECT COUNT(*) FROM page_galleries WHERE page_slug = ?");
         $gCount->execute([$p->slug]);
         $gTotal = $gCount->fetchColumn();
+
+        // Count staff
+        $sCount = $pdo->prepare("SELECT COUNT(*) FROM unit_staff WHERE unit_slug = ?");
+        $sCount->execute([$p->slug]);
+        $sTotal = $sCount->fetchColumn();
 
         // Get admin
         $aStmt = $pdo->prepare("SELECT name, email FROM admin_users WHERE unit_slug = ?");
@@ -662,6 +983,7 @@ window.onclick = function(e) {
                 </div>
 
                 <div style="margin-top: 15px; display: flex; gap: 8px; flex-wrap: wrap;">
+                    <span class="badge badge-purple"><i class="fas fa-user-md"></i> <?php echo $sTotal; ?> Terapis</span>
                     <span class="badge badge-gray"><i class="fas fa-images"></i> <?php echo $gTotal; ?> Foto Galeri</span>
                     <?php if ($p->content_len > 100): ?>
                         <span class="badge badge-success"><i class="fas fa-check"></i> Konten Aktif</span>
@@ -675,11 +997,11 @@ window.onclick = function(e) {
                 <a href="kelola_psikologi.php?edit=<?php echo $p->id; ?>" class="btn btn-primary" style="flex: 1; text-align: center; font-weight: 600; background: #7c3aed; border-color: #7c3aed;">
                     <i class="fas fa-edit"></i> Kelola Layanan
                 </a>
-                <a href="/talenta-semarang/page.php?slug=<?php echo htmlspecialchars($p->slug); ?>" target="_blank" class="btn btn-outline" title="Lihat di Halaman User">
+                <a href="/outsource_talenta_landing/magangtalenta/page.php?slug=<?php echo htmlspecialchars($p->slug); ?>" target="_blank" class="btn btn-outline" title="Lihat di Halaman User">
                     <i class="fas fa-external-link-alt"></i>
                 </a>
                 <?php if ($_SESSION['admin_type'] === 'super'): ?>
-                    <a href="kelola_psikologi.php?delete_service=<?php echo $p->id; ?>" onclick="return confirm('Hapus layanan <?php echo htmlspecialchars($p->title); ?> beserta galeri dan akun adminnya?')" class="btn btn-outline" style="color: #ef4444; border-color: #fca5a5;" title="Hapus Layanan">
+                    <a href="kelola_psikologi.php?delete_service=<?php echo $p->id; ?>" onclick="return confirm('Hapus layanan <?php echo htmlspecialchars($p->title); ?> beserta staf, kontak, galeri, dan akun adminnya?')" class="btn btn-outline" style="color: #ef4444; border-color: #fca5a5;" title="Hapus Layanan">
                         <i class="fas fa-trash"></i>
                     </a>
                 <?php endif; ?>
